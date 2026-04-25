@@ -38,7 +38,6 @@ Choose the right ingest path for each document, balancing query quality against 
 
 - **Hot**: LLM semantic chapter extraction — full LLM analysis producing summaries, tags, and chapter analysis that powers progressive query's multi-stage ranking (tags → documents → chapters)
 - **Cold**: Markdown syntax chapter extraction — heading-based split into natural chapters, indexed with BM25 inverted index + HNSW vector hybrid search. No LLM calls on ingest
-- **Auto mode** picks based on content length
 - Auto-promotion from cold to hot on frequent queries; also supports manual promotion
 
 ### Progressive Query
@@ -73,7 +72,7 @@ Full REST API for integrations. MCP (Model Context Protocol) support for AI agen
 
 ### 01 — Ingest
 
-Upload Markdown documents. Choose hot (full LLM analysis) or cold (index-only) ingest mode. Auto mode picks the best path based on content length and quota.
+Upload Markdown documents. Choose hot (full LLM analysis) or cold (index-only) ingest mode.
 
 ### 02 — Index
 
@@ -136,7 +135,6 @@ Open http://localhost:8080 in your browser. Complete the bootstrap wizard to cre
 
 Navigate to the Library page and click "Add Document". Paste Markdown content and choose an ingest mode:
 
-- **Auto** — Let TierSum decide based on content length and quota
 - **Hot** — LLM semantic chapter extraction (full analysis with summaries, tags, progressive query support)
 - **Cold** — Markdown syntax chapter extraction (heading-based split, BM25 + vector hybrid search; both at chapter granularity)
 

@@ -42,7 +42,6 @@ Open http://localhost:8080 in your browser. Complete the bootstrap wizard to cre
 
 Navigate to the Library page and click "Add Document". Paste Markdown content and choose an ingest mode:
 
-- **Auto** — Let TierSum decide based on content length
 - **Hot** — LLM semantic chapter extraction: full analysis (summaries, tags, chapter analysis) powers progressive query with pre-shaped semantic layer
 - **Cold** — Markdown syntax chapter extraction: content split by headings into natural chapters; indexed with BM25 inverted index + HNSW vector hybrid search. Chapter-level granularity (not arbitrary chunks)
 
@@ -66,11 +65,6 @@ LLM analyzes content to extract chapter summaries, document summary, and catalog
 <div class="p-4 rounded-lg bg-sky-500/10 border border-sky-500/20 mt-4">
 <strong class="text-sky-200">Cold — Markdown Syntax Chapter Extraction</strong><br>
 Splits content by Markdown headings into natural chapters (not fixed-size chunks), then indexes with BM25 inverted index + HNSW vector hybrid search. Both tiers share the same chapter-level granularity — no arbitrary chunking. No LLM calls on ingest. Best for large archives and cost-sensitive deployments.
-</div>
-
-<div class="p-4 rounded-lg bg-slate-700/30 border border-slate-600/30 mt-4">
-<strong class="text-slate-200">Auto — Smart Selection</strong><br>
-Hot if content length > 5000 chars (LLM semantic chapter extraction with summaries, tags, progressive query); otherwise cold (Markdown syntax chapter extraction with BM25 + vector hybrid search). Both paths preserve chapter-level semantic integrity. Recommended for most use cases.
 </div>
 
 ### API Example

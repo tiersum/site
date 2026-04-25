@@ -41,11 +41,9 @@ Choose the right ingest path for each document. Both paths use **chapter-level g
 |------|-------------|----------|
 | **Hot** | LLM semantic chapter extraction — full LLM analysis (summaries, tags, chapter analysis) powers progressive query | Frequently queried documents |
 | **Cold** | Markdown syntax chapter extraction — heading-based split into natural chapters; BM25 inverted index + HNSW vector hybrid search | Large archives, cost-sensitive |
-| **Auto** | Smart selection based on content length | Most use cases |
 
 - Hot: LLM semantic chapter extraction (pre-shaped layer for progressive query: tags → documents → chapters)
 - Cold: Markdown syntax chapter extraction (BM25 inverted index + HNSW vector; chapter-level granularity, no arbitrary chunks)
-- Auto mode picks based on content length
 - Auto-promotion from cold to hot on frequent queries; also supports manual promotion
 
 ---

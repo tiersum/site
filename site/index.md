@@ -21,6 +21,12 @@ On the **hot path**, AI work runs **when documents are ingested**: LLM semantic 
 
 ---
 
+## See It in Action
+
+![TierSum Search](/site/aasets/page_search_01.png)
+
+---
+
 ## Features
 
 ### Chapter-First Document Processing

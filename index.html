@@ -218,6 +218,15 @@
                     return page.replace(/[^a-zA-Z0-9-_]/g, '');
                 }
 
+                function getHashFromPath() {
+                    const hash = window.location.hash;
+                    // If hash doesn't start with #/site/, treat it as an anchor (e.g. #features)
+                    if (hash && !hash.startsWith('#/site/') && hash.length > 1) {
+                        return hash;
+                    }
+                    return null;
+                }
+
                 function setLocale(loc) {
                     if (!i18n[loc]) return;
                     locale.value = loc;
@@ -255,6 +264,15 @@
                         const titleMatch = text.match(/^#\s+(.+)$/m);
                         const title = titleMatch ? titleMatch[1] : 'TierSum';
                         document.title = `${title} — TierSum`;
+
+                        // Scroll to anchor after content renders
+                        const anchor = getHashFromPath();
+                        if (anchor) {
+                            setTimeout(() => {
+                                const el = document.querySelector(anchor);
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }, 50);
+                        }
                     } catch (e) {
                         error.value = e.message || t('loadFailed');
                         console.error('Failed to load markdown:', e);
@@ -265,7 +283,20 @@
 
                 onMounted(() => {
                     loadMarkdown();
-                    window.addEventListener('hashchange', loadMarkdown);
+                    window.addEventListener('hashchange', () => {
+                        // Only reload if hash route changed (starts with #/site/)
+                        const hash = window.location.hash;
+                        if (hash && hash.startsWith('#/site/')) {
+                            loadMarkdown();
+                        } else {
+                            // Anchor-only change: just scroll
+                            const anchor = getHashFromPath();
+                            if (anchor) {
+                                const el = document.querySelector(anchor);
+                                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }
+                    });
                 });
 
                 return {

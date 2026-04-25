@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TierSum</title>
+    <base href="/" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown-dark.min.css" />
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 950: '#020617', 900: '#0f172a', 800: '#1e293b', 700: '#334155', 600: '#475569' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html, body { background-color: #020617 !important; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .markdown-body { background-color: transparent !important; color: #cbd5e1 !important; }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 { color: #f1f5f9 !important; border-bottom-color: #334155 !important; }
+        .markdown-body p { color: #cbd5e1 !important; }
+        .markdown-body blockquote { border-left-color: #3b82f6 !important; background-color: rgba(59,130,246,0.1) !important; color: #93c5fd !important; }
+        .markdown-body code { background-color: rgba(30,41,59,0.8) !important; color: #e2e8f0 !important; }
+        .markdown-body pre { background-color: #0f172a !important; border: 1px solid #334155 !important; }
+        .markdown-body table th, .markdown-body table td { border-color: #334155 !important; }
+        .markdown-body table tr { background-color: transparent !important; border-top-color: #334155 !important; }
+        .markdown-body table tr:nth-child(2n) { background-color: rgba(30,41,59,0.5) !important; }
+        .markdown-body a { color: #60a5fa !important; }
+        .markdown-body a:hover { color: #93c5fd !important; }
+        .markdown-body strong { color: #f1f5f9 !important; }
+        .markdown-body ul li::marker, .markdown-body ol li::marker { color: #3b82f6 !important; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+    </style>
+</head>
+<body class="bg-[#020617] text-slate-100 min-h-screen">
+    <div id="app">
+        <!-- Header -->
+        <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <a href="/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">TierSum</span>
+                </a>
+                <nav class="flex items-center gap-1 flex-wrap justify-end">
+                    <a v-for="item in navItems" :key="item.id" :href="item.path"
+                       :class="['btn btn-ghost btn-sm', currentPage === item.id ? 'text-blue-400 bg-blue-500/10' : 'text-slate-400']">
+                        {{ item.label }}
+                    </a>
+                    <a href="https://github.com/tiersum/tiersum" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-ghost btn-sm text-slate-400 hover:text-slate-200">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        GitHub
+                    </a>
+                    <!-- Locale switcher -->
+                    <button @click="toggleLocale" class="btn btn-ghost btn-sm text-slate-400 hover:text-slate-200">
+                        {{ locale === 'zh' ? '中文' : 'EN' }}
+                    </button>
+                    <!-- Management Portal -->
+                    <div class="w-px h-6 bg-slate-700 mx-1"></div>
+                    <a href="/ui/search" class="btn btn-primary btn-sm gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        {{ locale === 'zh' ? '管理后台' : 'Management' }}
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-16">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar Navigation -->
+                <aside class="lg:w-64 shrink-0">
+                    <nav class="sticky top-24 space-y-6">
+                        <div>
+                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                                {{ locale === 'zh' ? '站点导航' : 'Site Navigation' }}
+                            </h3>
+                            <ul class="space-y-1">
+                                <li v-for="item in navItems" :key="item.id">
+                                    <a :href="item.path"
+                                       :class="['block px-3 py-2 rounded-lg text-sm transition-colors', currentPage === item.id ? 'bg-blue-500/10 text-blue-300' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50']">
+                                        {{ item.label }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                                {{ locale === 'zh' ? '管理功能' : 'Management' }}
+                            </h3>
+                            <ul class="space-y-1">
+                                <li>
+                                    <a href="/ui/search" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
+                                        {{ locale === 'zh' ? '搜索查询' : 'Search' }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/ui/library" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
+                                        {{ locale === 'zh' ? '文档文库' : 'Library' }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/ui/settings" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
+                                        {{ locale === 'zh' ? '设备与会话' : 'Devices & Sessions' }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/ui/admin" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
+                                        {{ locale === 'zh' ? '用户与 API 密钥' : 'Users & API Keys' }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/ui/observability" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
+                                        {{ locale === 'zh' ? '可观测性' : 'Observability' }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="flex-1 min-w-0">
+                    <div v-if="loading" class="space-y-4">
+                        <div class="h-8 bg-slate-800 rounded animate-pulse w-1/3"></div>
+                        <div class="h-4 bg-slate-800 rounded animate-pulse w-full"></div>
+                        <div class="h-4 bg-slate-800 rounded animate-pulse w-5/6"></div>
+                    </div>
+                    <div v-else-if="error" class="card bg-slate-900/50 border border-slate-800">
+                        <div class="card-body">
+                            <div class="alert alert-error bg-red-950/40 border-red-900 text-red-200">
+                                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>{{ error }}</span>
+                            </div>
+                            <a href="https://tiersum.tech/" class="btn btn-primary btn-sm mt-4">
+                                {{ locale === 'zh' ? '返回首页' : 'Go Home' }}
+                            </a>
+                        </div>
+                    </div>
+                    <div v-else class="markdown-body max-w-none text-slate-300">
+                        <div v-html="content"></div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+        const { createApp, ref, computed, watch, onMounted } = Vue;
+
+        const i18n = {
+            en: {
+                home: 'Home',
+                features: 'Features',
+                docs: 'Documentation',
+                about: 'About',
+                siteNav: 'Site Navigation',
+                management: 'Management',
+                search: 'Search',
+                library: 'Library',
+                devicesSessions: 'Devices & Sessions',
+                usersAPIKeys: 'Users & API Keys',
+                observability: 'Observability',
+                goHome: 'Go Home',
+                pageNotFound: 'Page not found',
+                loadFailed: 'Failed to load content'
+            },
+            zh: {
+                home: '首页',
+                features: '功能特性',
+                docs: '文档',
+                about: '关于',
+                siteNav: '站点导航',
+                management: '管理功能',
+                search: '搜索查询',
+                library: '文档文库',
+                devicesSessions: '设备与会话',
+                usersAPIKeys: '用户与 API 密钥',
+                observability: '可观测性',
+                goHome: '返回首页',
+                pageNotFound: '页面未找到',
+                loadFailed: '加载内容失败'
+            }
+        };
+
+        createApp({
+            setup() {
+                const loading = ref(true);
+                const error = ref(null);
+                const content = ref('');
+                const locale = ref(localStorage.getItem('tiersum_site_locale') || (navigator.language.startsWith('zh') ? 'zh' : 'en'));
+                const currentPage = ref('index');
+
+                const t = (key) => i18n[locale.value]?.[key] || i18n.en[key];
+
+                const navItems = computed(() => [
+                    { id: 'index', label: t('home'), path: '/site/index' },
+                    { id: 'features', label: t('features'), path: '/site/features' },
+                    { id: 'documentation', label: t('docs'), path: '/site/documentation' },
+                    { id: 'about', label: t('about'), path: '/site/about' }
+                ]);
+
+                function getPageFromPath() {
+                    const hash = window.location.hash;
+                    const path = window.location.pathname;
+                    let page = 'index';
+                    if (hash && hash.startsWith('#/site/')) {
+                        page = hash.replace('#/site/', '') || 'index';
+                    } else if (path.startsWith('/site/')) {
+                        page = path.replace('/site/', '').replace(/\.md$/, '') || 'index';
+                    }
+                    return page.replace(/[^a-zA-Z0-9-_]/g, '');
+                }
+
+                async function loadMarkdown() {
+                    loading.value = true;
+                    error.value = null;
+                    content.value = '';
+
+                    const page = getPageFromPath();
+                    currentPage.value = page;
+                    const suffix = locale.value === 'zh' ? '.zh.md' : '.md';
+                    const url = `site/${page}${suffix}`;
+
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) {
+                            if (response.status === 404) {
+                                throw new Error(t('pageNotFound'));
+                            }
+                            throw new Error(`${t('loadFailed')}: ${response.status}`);
+                        }
+                        const text = await response.text();
+                        content.value = marked.parse(text);
+
+                        // Update page title from first h1
+                        const titleMatch = text.match(/^#\s+(.+)$/m);
+                        const title = titleMatch ? titleMatch[1] : 'TierSum';
+                        document.title = `${title} — TierSum`;
+                    } catch (e) {
+                        error.value = e.message || t('loadFailed');
+                        console.error('Failed to load markdown:', e);
+                    } finally {
+                        loading.value = false;
+                    }
+                }
+
+                function toggleLocale() {
+                    locale.value = locale.value === 'zh' ? 'en' : 'zh';
+                    localStorage.setItem('tiersum_site_locale', locale.value);
+                    loadMarkdown();
+                }
+
+                onMounted(() => {
+                    loadMarkdown();
+                    window.addEventListener('hashchange', loadMarkdown);
+                });
+
+                return {
+                    loading, error, content, locale, currentPage,
+                    navItems, toggleLocale, t
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

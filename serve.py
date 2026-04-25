@@ -114,7 +114,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(b"<h1>404 Not Found</h1>")
 
     def log_message(self, fmt, *args):
-        print(f"[{self.log_date_time_string()}] {args[0]} {args[1]} - {args[2]}")
+        message = fmt % args if args else fmt
+        print(f"[{self.log_date_time_string()}] {message}")
 
 
 if __name__ == '__main__':

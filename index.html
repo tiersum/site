@@ -145,26 +145,11 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script>
-        // Configure marked to generate heading IDs matching anchor links
-        const markedHeadingId = (text) => text.toLowerCase()
+        // Generate a heading slug matching anchor links in Markdown (e.g. #quick-start)
+        const headingSlug = (text) => text.toLowerCase()
             .replace(/<[^>]*>/g, '')
             .replace(/[^\w\u4e00-\u9fff]+/g, '-')
             .replace(/^-+|-+$/g, '');
-        if (typeof marked.use === 'function') {
-            marked.use({ gfm: true, breaks: false });
-        } else if (typeof marked.setOptions === 'function') {
-            marked.setOptions({ gfm: true, breaks: false });
-        }
-        try {
-            const renderer = new marked.Renderer();
-            renderer.heading = function (...args) {
-                const text = typeof args[0] === 'object' ? args[0].text : args[0];
-                const level = typeof args[0] === 'object' ? args[0].depth : args[1];
-                const id = markedHeadingId(text || '');
-                return `<h${level} id="${id}">${text}</h${level}>`;
-            };
-            marked.setOptions({ renderer });
-        } catch (e) { /* marked.Renderer may not exist in newer versions */ }
 
         const { createApp, ref, computed, watch, onMounted } = Vue;
 
@@ -279,7 +264,10 @@
                             throw new Error(`${t('loadFailed')}: ${response.status}`);
                         }
                         const text = await response.text();
-                        content.value = marked.parse(text);
+                        content.value = marked.parse(text)
+                            // Add IDs to headings so anchor links work (marked v18+ doesn't auto-add IDs)
+                            .replace(/<(h[1-6])(?!\sid=)([^>]*)>([^<]+)<\/h[1-6]>/gi,
+                                (_, tag, attrs, inner) => `<${tag} id="${headingSlug(inner)}"${attrs}>${inner}</${tag}>`);
 
                         // Update page title from first h1
                         const titleMatch = text.match(/^#\s+(.+)$/m);

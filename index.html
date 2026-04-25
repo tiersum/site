@@ -74,9 +74,9 @@
                             </svg>
                             {{ locale === 'zh' ? '中文' : 'English' }}
                         </button>
-                        <ul class="dropdown-content menu z-[100] mt-2 rounded-box border border-slate-700 bg-slate-900 p-2 shadow-xl">
-                            <li><a @click.prevent="setLocale('en')" :class="['cursor-pointer', locale === 'en' ? 'text-blue-300' : 'text-slate-300']">English</a></li>
-                            <li><a @click.prevent="setLocale('zh')" :class="['cursor-pointer', locale === 'zh' ? 'text-blue-300' : 'text-slate-300']">中文</a></li>
+                        <ul tabindex="0" class="dropdown-content menu z-[100] mt-2 rounded-box border border-slate-700 bg-slate-900 p-2 shadow-xl">
+                            <li><a href="javascript:void(0)" @click.stop.prevent="setLocale('en')" :class="['cursor-pointer', locale === 'en' ? 'text-blue-300' : 'text-slate-300']">English</a></li>
+                            <li><a href="javascript:void(0)" @click.stop.prevent="setLocale('zh')" :class="['cursor-pointer', locale === 'zh' ? 'text-blue-300' : 'text-slate-300']">中文</a></li>
                         </ul>
                     </div>
                     <!-- Management Portal -->

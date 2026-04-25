@@ -226,6 +226,8 @@
                     } catch { /* ignore */ }
                     document.documentElement.lang = loc === 'zh' ? 'zh-CN' : 'en';
                     loadMarkdown();
+                    // Blur active element to close daisyUI dropdown
+                    if (document.activeElement) document.activeElement.blur();
                 }
 
                 async function loadMarkdown() {

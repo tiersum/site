@@ -28,22 +28,61 @@ UI_STUB_HTML = """<!DOCTYPE html>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
         </div>
-        <h1 class="text-xl font-bold text-slate-100 mb-2">Management UI</h1>
-        <p class="text-slate-400 mb-6">
+        <h1 class="text-xl font-bold text-slate-100 mb-2" data-i18n="title">Management UI</h1>
+        <p class="text-slate-400 mb-6" data-i18n="desc">
             The management interface is served by the <strong class="text-blue-400">tiersum</strong> Go backend.
             It is not available in local static-site mode.
         </p>
         <div class="bg-slate-800/50 rounded-lg p-4 text-left text-sm font-mono text-slate-300 mb-6">
-            <p class="text-slate-500 mb-1"># Start the backend (in tiersum repo)</p>
+            <p class="text-slate-500 mb-1" data-i18n="cmdLabel"># Start the backend (in tiersum repo)</p>
             <p>go run cmd/main.go</p>
         </div>
         <a href="/" class="btn btn-primary btn-sm inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
-            Back to Site
+            <span data-i18n="back">Back to Site</span>
         </a>
     </div>
+    <script>
+        const i18n = {
+            en: {
+                title: 'Management UI',
+                desc: 'The management interface is served by the <strong class="text-blue-400">tiersum</strong> Go backend. It is not available in local static-site mode.',
+                cmdLabel: '# Start the backend (in tiersum repo)',
+                back: 'Back to Site'
+            },
+            zh: {
+                title: '管理后台',
+                desc: '管理界面由 <strong class="text-blue-400">tiersum</strong> Go 后端提供。在本地静态站点模式下不可用。',
+                cmdLabel: '# 启动后端（在 tiersum 仓库中）',
+                back: '返回站点'
+            }
+        };
+        const STORAGE_KEY = 'tiersum_locale';
+        const DEFAULT_LOCALE = 'en';
+        let currentLocale = (() => {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored && i18n[stored]) return stored;
+            } catch { /* ignore */ }
+            const browser = (navigator.language || navigator.userLanguage || '').slice(0, 2);
+            return i18n[browser] ? browser : DEFAULT_LOCALE;
+        })();
+        function setLocale(loc) {
+            if (!i18n[loc]) return;
+            currentLocale = loc;
+            try { localStorage.setItem(STORAGE_KEY, loc); } catch { /* ignore */ }
+            document.documentElement.lang = loc === 'zh' ? 'zh-CN' : 'en';
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLocale][key]) {
+                    el.innerHTML = i18n[currentLocale][key];
+                }
+            });
+        }
+        setLocale(currentLocale);
+    </script>
 </body>
 </html>"""
 

@@ -67,9 +67,18 @@
                         GitHub
                     </a>
                     <!-- Locale switcher -->
-                    <button @click="toggleLocale" class="btn btn-ghost btn-sm text-slate-400 hover:text-slate-200">
-                        {{ locale === 'zh' ? '中文' : 'EN' }}
-                    </button>
+                    <div class="dropdown dropdown-end">
+                        <button class="btn btn-ghost btn-sm text-slate-400 hover:text-slate-200 gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
+                            {{ locale === 'zh' ? '中文' : 'English' }}
+                        </button>
+                        <ul class="dropdown-content menu z-[100] mt-2 rounded-box border border-slate-700 bg-slate-900 p-2 shadow-xl">
+                            <li><a @click.prevent="setLocale('en')" :class="['cursor-pointer', locale === 'en' ? 'text-blue-300' : 'text-slate-300']">English</a></li>
+                            <li><a @click.prevent="setLocale('zh')" :class="['cursor-pointer', locale === 'zh' ? 'text-blue-300' : 'text-slate-300']">中文</a></li>
+                        </ul>
+                    </div>
                     <!-- Management Portal -->
                     <div class="w-px h-6 bg-slate-700 mx-1"></div>
                     <a href="/ui/search" class="btn btn-primary btn-sm gap-1">
@@ -209,7 +218,14 @@
                 const loading = ref(true);
                 const error = ref(null);
                 const content = ref('');
-                const locale = ref(localStorage.getItem('tiersum_site_locale') || (navigator.language.startsWith('zh') ? 'zh' : 'en'));
+                const locale = ref((() => {
+                    try {
+                        const stored = localStorage.getItem('tiersum_locale');
+                        if (stored && i18n[stored]) return stored;
+                    } catch { /* ignore */ }
+                    const browser = (navigator.language || navigator.userLanguage || '').slice(0, 2);
+                    return i18n[browser] ? browser : 'en';
+                })());
                 const currentPage = ref('index');
 
                 const t = (key) => i18n[locale.value]?.[key] || i18n.en[key];
@@ -231,6 +247,16 @@
                         page = path.replace('/site/', '').replace(/\.md$/, '') || 'index';
                     }
                     return page.replace(/[^a-zA-Z0-9-_]/g, '');
+                }
+
+                function setLocale(loc) {
+                    if (!i18n[loc]) return;
+                    locale.value = loc;
+                    try {
+                        localStorage.setItem('tiersum_locale', loc);
+                    } catch { /* ignore */ }
+                    document.documentElement.lang = loc === 'zh' ? 'zh-CN' : 'en';
+                    loadMarkdown();
                 }
 
                 async function loadMarkdown() {
@@ -266,12 +292,6 @@
                     }
                 }
 
-                function toggleLocale() {
-                    locale.value = locale.value === 'zh' ? 'en' : 'zh';
-                    localStorage.setItem('tiersum_site_locale', locale.value);
-                    loadMarkdown();
-                }
-
                 onMounted(() => {
                     loadMarkdown();
                     window.addEventListener('hashchange', loadMarkdown);
@@ -279,7 +299,7 @@
 
                 return {
                     loading, error, content, locale, currentPage,
-                    navItems, toggleLocale, t
+                    navItems, setLocale, t
                 };
             }
         }).mount('#app');

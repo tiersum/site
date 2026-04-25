@@ -68,7 +68,7 @@
                     </a>
                     <!-- Locale switcher -->
                     <div class="dropdown dropdown-end">
-                        <button class="btn btn-ghost btn-sm text-slate-400 hover:text-slate-200 gap-1">
+                        <button tabindex="0" class="btn btn-ghost btn-sm text-slate-400 hover:text-slate-200 gap-1">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
                             </svg>
@@ -110,38 +110,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div>
-                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                                {{ locale === 'zh' ? '管理功能' : 'Management' }}
-                            </h3>
-                            <ul class="space-y-1">
-                                <li>
-                                    <a href="/ui/search" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
-                                        {{ locale === 'zh' ? '搜索查询' : 'Search' }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/ui/library" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
-                                        {{ locale === 'zh' ? '文档文库' : 'Library' }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/ui/settings" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
-                                        {{ locale === 'zh' ? '设备与会话' : 'Devices & Sessions' }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/ui/admin" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
-                                        {{ locale === 'zh' ? '用户与 API 密钥' : 'Users & API Keys' }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/ui/observability" class="block px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors">
-                                        {{ locale === 'zh' ? '可观测性' : 'Observability' }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+
                     </nav>
                 </aside>
 

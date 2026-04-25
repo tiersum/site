@@ -128,10 +128,13 @@ if __name__ == '__main__':
 
     port = args.port or int(os.environ.get("PORT", DEFAULT_PORT))
 
-    with socketserver.TCPServer(("", port), Handler) as httpd:
-        print(f"Serving tiersum-site at http://localhost:{port}")
-        print("Press Ctrl+C to stop")
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nServer stopped.")
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.TCPServer(("", port), Handler)
+    print(f"Serving tiersum-site at http://localhost:{port}")
+    print("Press Ctrl+C to stop")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nServer stopped.")
+    finally:
+        httpd.server_close()

@@ -4,7 +4,7 @@
   <p class="text-xl text-slate-400 mb-4">Your Knowledge, <strong class="text-slate-100">Hierarchically Organized</strong></p>
   <p class="text-slate-500 mb-6">TierSum is a RAG-free document retrieval system that preserves document structure through multi-layer abstraction. Hot documents get LLM summaries; cold documents stay searchable. All at chapter granularity.</p>
   <div class="flex justify-center gap-4">
-    <a href="/search" class="btn btn-primary">Get Started</a>
+    <a href="/site/documentation" class="btn btn-primary">Get Started</a>
     <a href="/site/about" class="btn btn-outline border-slate-600">Learn More</a>
   </div>
 </div>

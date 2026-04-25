@@ -4,7 +4,7 @@
   <p class="text-xl text-slate-400 mb-4">您的知识，<strong class="text-slate-100">分层有序</strong></p>
   <p class="text-slate-500 mb-6">TierSum 是一个无需 RAG 的文档检索系统，通过多层抽象保留文档结构。热文档获得 LLM 摘要；冷文档保持可搜索。全部以章节粒度处理。</p>
   <div class="flex justify-center gap-4">
-    <a href="/search" class="btn btn-primary">开始使用</a>
+    <a href="/site/documentation" class="btn btn-primary">开始使用</a>
     <a href="/site/about" class="btn btn-outline border-slate-600">了解更多</a>
   </div>
 </div>

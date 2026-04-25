@@ -2,7 +2,7 @@
 
 <div class="text-center mb-8">
   <p class="text-xl text-slate-400 mb-4">Your Knowledge, <strong class="text-slate-100">Hierarchically Organized</strong></p>
-  <p class="text-slate-500 mb-6">TierSum is a RAG-free document retrieval system that preserves document structure through multi-layer abstraction. Hot documents get LLM summaries; cold documents stay searchable. All at chapter granularity.</p>
+  <p class="text-slate-500 mb-6">TierSum is a RAG-free document retrieval system that preserves document structure through multi-layer abstraction. Hot documents get LLM semantic chapter extraction for progressive query; cold documents use Markdown syntax chapter extraction indexed with BM25 inverted + vector hybrid search. All at chapter granularity — not arbitrary chunks.</p>
   <div class="flex justify-center gap-4">
     <a href="/site/documentation" class="btn btn-primary">Get Started</a>
     <a href="/site/about" class="btn btn-outline border-slate-600">Learn More</a>
@@ -15,7 +15,7 @@
 
 Many retrieval systems split text into small overlapping chunks and rely mainly on similarity search. That can blur structure and lose context. TierSum keeps a **clear hierarchy**: document overview, chapter-level summaries, and original Markdown — plus a **tag and topic layer** so you navigate knowledge the way humans organize it, not the way embeddings shard it.
 
-On the **hot path**, AI work runs **when documents are ingested**: tags, a document synopsis, and chapter-level blurbs become the **pre-shaped layer** that **progressive query** reuses—narrowing *tags → documents → chapters* with LLM scoring at each hop, like skimming an outline before opening the right section. **Cold** documents skip most of that upfront cost but stay searched and returned **by whole chapters**; ones that see heavy use can **promote** to hot when you want the full pre-shaped experience.
+On the **hot path**, AI work runs **when documents are ingested**: LLM semantic chapter extraction produces tags, a document synopsis, and chapter-level summaries — the **pre-shaped layer** that **progressive query** reuses, narrowing *tags → documents → chapters* with LLM scoring at each hop, like skimming an outline before opening the right section. **Cold** documents use **Markdown syntax chapter extraction**: content is split by headings into natural chapters (not blind fixed-size fragments), indexed with BM25 inverted index + HNSW vector hybrid search, and returned **by whole chapters**. Both tiers share chapter-level granularity preserving semantic integrity. Ones that see heavy use can **promote** to hot when you want the full pre-shaped experience.
 
 > **Chapter-first, hot or cold.** For *both* paths, TierSum treats **Markdown sections (chapters)** as the working unit — aligned with headings and document structure — instead of blind fixed-size fragments. Summaries, progressive narrowing, and cold search all respect those boundaries so **meaning stays intact end-to-end**.
 
@@ -34,12 +34,12 @@ Traditional RAG systems split documents into arbitrary chunks, destroying struct
 
 ### Hot / Cold Tiering
 
-Not all documents need full LLM analysis. TierSum lets you choose the right ingest path for each document, balancing query quality against cost.
+Choose the right ingest path for each document, balancing query quality against cost. Both paths use **chapter-level granularity** — not fixed-size chunks — preserving semantic integrity end-to-end.
 
-- **Hot**: Full LLM summaries + tags on ingest
-- **Cold**: BM25 + vector hybrid search
-- **Auto mode** picks based on content + quota
-- Auto-promotion from cold to hot on frequent queries
+- **Hot**: LLM semantic chapter extraction — full LLM analysis producing summaries, tags, and chapter analysis that powers progressive query's multi-stage ranking (tags → documents → chapters)
+- **Cold**: Markdown syntax chapter extraction — heading-based split into natural chapters, indexed with BM25 inverted index + HNSW vector hybrid search. No LLM calls on ingest
+- **Auto mode** picks based on content length
+- Auto-promotion from cold to hot on frequent queries; also supports manual promotion
 
 ### Progressive Query
 
@@ -137,8 +137,8 @@ Open http://localhost:8080 in your browser. Complete the bootstrap wizard to cre
 Navigate to the Library page and click "Add Document". Paste Markdown content and choose an ingest mode:
 
 - **Auto** — Let TierSum decide based on content length and quota
-- **Hot** — Force full LLM analysis (better queries, uses quota)
-- **Cold** — Index only (faster ingest, BM25 + vector search)
+- **Hot** — LLM semantic chapter extraction (full analysis with summaries, tags, progressive query support)
+- **Cold** — Markdown syntax chapter extraction (heading-based split, BM25 + vector hybrid search; both at chapter granularity)
 
 ---
 

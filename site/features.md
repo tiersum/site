@@ -4,9 +4,21 @@ Everything you need for structured knowledge retrieval. TierSum combines hierarc
 
 ---
 
+## Why TierSum — Not Your Typical RAG
+
+Traditional retrieval systems split documents into small overlapping **fixed-size chunks** and rely on vector similarity to find matches — which **blurs structure, loses context, and breaks semantic boundaries**. TierSum is different by design:
+
+- **RAG-free, chapter-first architecture** — not an embedding-based chunk retrieval system. Documents are organized as **document → chapter → source**, mirroring how humans write and read.
+- **Both hot and cold use chapter-level granularity** — not arbitrary fixed-size fragments. Every retrieval returns **meaningful, complete sections**, preserving semantic integrity end-to-end.
+- **Hot path**: LLM semantic chapter extraction generates document summaries, per-chapter summaries, and catalog tags, forming a **pre-shaped semantic layer** that progressive query reuses (**tags → documents → chapters**, LLM-scored at each hop).
+- **Cold path**: Markdown syntax chapter extraction splits content by headings into natural chapters, indexed with **BM25 inverted index + HNSW vector hybrid search**. No LLM cost on ingest, same chapter-level integrity.
+- **Progressive query** is not a single vector similarity lookup — it's a multi-stage LLM pipeline that narrows from topic, to document, to section, just like a human researcher.
+
+---
+
 ## Chapter-First Document Processing
 
-Traditional RAG systems split documents into arbitrary chunks, destroying structure and context. TierSum parses Markdown by headings, creating a natural chapter hierarchy that mirrors how humans write and read.
+TierSum parses Markdown by headings, creating a natural chapter hierarchy that mirrors how humans write and read — not arbitrary byte-sized chunks.
 
 - Heading-aware splitting preserves document structure
 - Configurable token budgets per chapter
@@ -35,18 +47,18 @@ Use chapter-first splitting...
 
 ## Hot / Cold Tiering
 
-Not all documents need full LLM analysis. TierSum lets you choose the right ingest path for each document, balancing query quality against cost.
+Choose the right ingest path for each document. Both paths use **chapter-level granularity** — not fixed-size chunks — preserving semantic integrity end-to-end.
 
 | Tier | Description | Best For |
 |------|-------------|----------|
-| **Hot** | Full LLM summaries + tags on ingest | Frequently queried documents |
-| **Cold** | BM25 + vector hybrid search | Large archives, cost-sensitive |
-| **Auto** | Smart selection based on content + quota | Most use cases |
+| **Hot** | LLM semantic chapter extraction — full LLM analysis (summaries, tags, chapter analysis) powers progressive query | Frequently queried documents |
+| **Cold** | Markdown syntax chapter extraction — heading-based split into natural chapters; BM25 inverted index + HNSW vector hybrid search | Large archives, cost-sensitive |
+| **Auto** | Smart selection based on content length | Most use cases |
 
-- Hot: Full LLM summaries + tags on ingest
-- Cold: BM25 + vector hybrid search
-- Auto mode picks based on content + quota
-- Auto-promotion from cold to hot on frequent queries
+- Hot: LLM semantic chapter extraction (pre-shaped layer for progressive query: tags → documents → chapters)
+- Cold: Markdown syntax chapter extraction (BM25 inverted index + HNSW vector; chapter-level granularity, no arbitrary chunks)
+- Auto mode picks based on content length
+- Auto-promotion from cold to hot on frequent queries; also supports manual promotion
 
 ---
 

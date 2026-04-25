@@ -55,9 +55,9 @@ Open http://localhost:8080 in your browser. Complete the bootstrap wizard to cre
 
 Navigate to the Library page and click "Add Document". Paste Markdown content and choose an ingest mode:
 
-- **Auto** — Let TierSum decide based on content length and quota
-- **Hot** — Force full LLM analysis (better queries, uses quota)
-- **Cold** — Index only (faster ingest, BM25 + vector search)
+- **Auto** — Let TierSum decide based on content length
+- **Hot** — LLM semantic chapter extraction: full analysis (summaries, tags, chapter analysis) powers progressive query with pre-shaped semantic layer
+- **Cold** — Markdown syntax chapter extraction: content split by headings into natural chapters; indexed with BM25 inverted index + HNSW vector hybrid search. Chapter-level granularity (not arbitrary chunks)
 
 ---
 
@@ -72,18 +72,18 @@ Currently, TierSum supports Markdown (`.md`, `.markdown`) documents. The parser 
 ### Ingest Modes
 
 <div class="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
-<strong class="text-amber-200">Hot — Full LLM Analysis</strong><br>
-Generates document summary, chapter summaries, and catalog tags. Best for frequently queried documents. Counts against hourly quota.
+<strong class="text-amber-200">Hot — LLM Semantic Chapter Extraction</strong><br>
+LLM analyzes content to extract chapter summaries, document summary, and catalog tags. The pre-built summaries enable progressive query's multi-stage LLM ranking (tags → documents → chapters). Best for frequently queried documents.
 </div>
 
 <div class="p-4 rounded-lg bg-sky-500/10 border border-sky-500/20 mt-4">
-<strong class="text-sky-200">Cold — Index Only</strong><br>
-Splits into chapters and indexes with BM25 + vector search. No LLM calls on ingest. Best for large archives and cost-sensitive deployments.
+<strong class="text-sky-200">Cold — Markdown Syntax Chapter Extraction</strong><br>
+Splits content by Markdown headings into natural chapters (not fixed-size chunks), then indexes with BM25 inverted index + HNSW vector hybrid search. Both tiers share the same chapter-level granularity — no arbitrary chunking. No LLM calls on ingest. Best for large archives and cost-sensitive deployments.
 </div>
 
 <div class="p-4 rounded-lg bg-slate-700/30 border border-slate-600/30 mt-4">
 <strong class="text-slate-200">Auto — Smart Selection</strong><br>
-Chooses hot if content length > 5000 chars and quota allows; otherwise cold. Recommended for most use cases.
+Hot if content length > 5000 chars (LLM semantic chapter extraction with summaries, tags, progressive query); otherwise cold (Markdown syntax chapter extraction with BM25 + vector hybrid search). Both paths preserve chapter-level semantic integrity. Recommended for most use cases.
 </div>
 
 ### API Example
@@ -138,15 +138,11 @@ GET /api/v1/cold/chapter_hits?q=auth,login&max_results=20
 
 ## Hot / Cold Tiering
 
-TierSum's core cost optimization mechanism. Documents can be hot (fully analyzed) or cold (indexed only).
+TierSum's core tiering mechanism. Documents can be hot (LLM semantic chapter extraction for progressive query — summaries, tags, chapter analysis) or cold (Markdown syntax chapter extraction — BM25 inverted index + HNSW vector hybrid search). Both paths use chapter-level granularity, not fixed-size chunks, preserving semantic integrity end-to-end.
 
 ### Promotion
 
-Cold documents with `query_count >= 3` are automatically queued for promotion. A background job runs every 5 minutes to promote queued documents to hot, running full LLM analysis.
-
-### Quota Management
-
-Hot ingest is rate-limited to control LLM costs. Default: 100 documents per hour. Check current quota at `GET /api/v1/quota`.
+Cold documents can be promoted to hot manually from the document detail page or automatically when they accumulate enough queries. Promotion runs full LLM analysis, converting the document from Markdown syntax chapter extraction to LLM semantic chapter extraction with summaries and tags.
 
 ---
 

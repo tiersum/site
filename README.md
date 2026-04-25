@@ -33,10 +33,11 @@ tiersum-site/
 ### 开发
 
 ```bash
-# 本地调试（无需 Nginx，直接启动静态服务器）
-python3 -m http.server 8000
+# 本地调试（无需 Nginx，支持 SPA 路由回退）
+python3 serve.py
 
-# 然后访问 http://localhost:8000
+# 或赋予执行权限后直接运行
+chmod +x serve.py && ./serve.py
 ```
 
 ```bash

@@ -5,9 +5,11 @@ Pure static site. No build step, no package manager, no test framework.
 
 ## Local Development
 ```bash
-python3 -m http.server 8000
+python3 serve.py
 # Open http://localhost:8000
 ```
+
+`serve.py` handles SPA fallback (`/site/features` → `index.html`). `python3 -m http.server` does **not**.
 
 ## Architecture
 - `index.html` — Single-page Vue 3 app (CDN-loaded), serves as the site shell

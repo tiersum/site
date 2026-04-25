@@ -5,8 +5,9 @@ Pure static site. No build step, no package manager, no test framework.
 
 ## Local Development
 ```bash
-python3 serve.py
-# Open http://localhost:8000
+python3 serve.py          # default port 8000
+python3 serve.py 9000     # custom port
+PORT=9000 python3 serve.py # env variable
 ```
 
 `serve.py` handles SPA fallback (`/site/features` → `index.html`). `python3 -m http.server` does **not**.

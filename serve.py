@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Local dev server for tiersum-site with SPA fallback."""
 
+import argparse
 import http.server
 import os
 import socketserver
 
-PORT = 8000
+DEFAULT_PORT = 8000
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -27,8 +28,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Serving tiersum-site at http://localhost:{PORT}")
+    parser = argparse.ArgumentParser(description="Local dev server for tiersum-site")
+    parser.add_argument("port", nargs="?", type=int, default=None,
+                        help=f"Port to listen on (default: {DEFAULT_PORT})")
+    args = parser.parse_args()
+
+    port = args.port or int(os.environ.get("PORT", DEFAULT_PORT))
+
+    with socketserver.TCPServer(("", port), Handler) as httpd:
+        print(f"Serving tiersum-site at http://localhost:{port}")
         print("Press Ctrl+C to stop")
         try:
             httpd.serve_forever()

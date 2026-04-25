@@ -34,10 +34,9 @@ tiersum-site/
 
 ```bash
 # 本地调试（无需 Nginx，支持 SPA 路由回退）
-python3 serve.py
-
-# 或赋予执行权限后直接运行
-chmod +x serve.py && ./serve.py
+python3 serve.py          # 默认端口 8000
+python3 serve.py 9000     # 指定端口
+PORT=9000 python3 serve.py # 通过环境变量指定
 ```
 
 ```bash

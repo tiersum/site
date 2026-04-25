@@ -4,18 +4,6 @@ Everything you need for structured knowledge retrieval. TierSum combines hierarc
 
 ---
 
-## Why TierSum — Not Your Typical RAG
-
-Traditional retrieval systems split documents into small overlapping **fixed-size chunks** and rely on vector similarity to find matches — which **blurs structure, loses context, and breaks semantic boundaries**. TierSum is different by design:
-
-- **RAG-free, chapter-first architecture** — not an embedding-based chunk retrieval system. Documents are organized as **document → chapter → source**, mirroring how humans write and read.
-- **Both hot and cold use chapter-level granularity** — not arbitrary fixed-size fragments. Every retrieval returns **meaningful, complete sections**, preserving semantic integrity end-to-end.
-- **Hot path**: LLM semantic chapter extraction generates document summaries, per-chapter summaries, and catalog tags, forming a **pre-shaped semantic layer** that progressive query reuses (**tags → documents → chapters**, LLM-scored at each hop).
-- **Cold path**: Markdown syntax chapter extraction splits content by headings into natural chapters, indexed with **BM25 inverted index + HNSW vector hybrid search**. No LLM cost on ingest, same chapter-level integrity.
-- **Progressive query** is not a single vector similarity lookup — it's a multi-stage LLM pipeline that narrows from topic, to document, to section, just like a human researcher.
-
----
-
 ## Chapter-First Document Processing
 
 TierSum parses Markdown by headings, creating a natural chapter hierarchy that mirrors how humans write and read — not arbitrary byte-sized chunks.

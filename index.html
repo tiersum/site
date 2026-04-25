@@ -145,6 +145,25 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script>
+        // Configure marked to generate heading IDs matching anchor links
+        const markedHeadingId = (text) => text.toLowerCase()
+            .replace(/<[^>]*>/g, '')
+            .replace(/[^\w\u4e00-\u9fff]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        if (typeof marked.use === 'function') {
+            marked.use({ gfm: true, breaks: false });
+        } else if (typeof marked.setOptions === 'function') {
+            marked.setOptions({ gfm: true, breaks: false });
+        }
+        try {
+            const renderer = new marked.Renderer();
+            renderer.heading = function (text, level) {
+                const id = markedHeadingId(text);
+                return `<h${level} id="${id}">${text}</h${level}>`;
+            };
+            marked.setOptions({ renderer });
+        } catch (e) { /* marked.Renderer may not exist in newer versions */ }
+
         const { createApp, ref, computed, watch, onMounted } = Vue;
 
         const i18n = {
@@ -284,18 +303,11 @@
                 onMounted(() => {
                     loadMarkdown();
                     window.addEventListener('hashchange', () => {
-                        // Only reload if hash route changed (starts with #/site/)
                         const hash = window.location.hash;
                         if (hash && hash.startsWith('#/site/')) {
                             loadMarkdown();
-                        } else {
-                            // Anchor-only change: just scroll
-                            const anchor = getHashFromPath();
-                            if (anchor) {
-                                const el = document.querySelector(anchor);
-                                if (el) el.scrollIntoView({ behavior: 'smooth' });
-                            }
                         }
+                        // Non-route hash changes (e.g. #features) are handled by the browser natively
                     });
                 });
 

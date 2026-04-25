@@ -2,20 +2,7 @@
 
 Complete guide to using TierSum.
 
----
 
-## Table of Contents
-
-- [Quick Start](#quick-start)
-- [Ingesting Documents](#ingesting-documents)
-- [Querying](#querying)
-- [Hot / Cold Tiering](#hot--cold-tiering)
-- [Authentication](#authentication)
-- [Documents API](#documents-api)
-- [Query API](#query-api)
-- [MCP Protocol](#mcp-protocol)
-
----
 
 ## Quick Start
 
